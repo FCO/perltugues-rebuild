@@ -12,18 +12,21 @@ use Data::Dumper;
 
 sub new {
    my $class = shift;
-   bless {parser => Parse::RecDescent->new($self->get_rule)}, $class;
+   $self = bless {}, $class;
+   $self->{parser} = Parse::RecDescent->new($self->get_rule);
+   $self
 }
 
 sub parse {
    my $self = shift;
+   my $code = shift;
    my @ret;
-   my $code = $self->{parser}->code(shift @ARGV);
-   while(my $act = shift @{ $code }) {
+   my $tree = $self->{parser}->code($code);
+   while(my $act = shift @{ $tree }) {
       push @ret, ref $act eq "ARRAY" ? @$act : $act;
    }
    
-   print Dumper \@ret;
+   [@ret];
 }
 
 sub get_rule {
