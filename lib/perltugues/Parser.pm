@@ -5,7 +5,7 @@ use Data::Dumper;
 
 #$::RD_ERRORS       = 1;
 #$::RD_WARN         = 1;
-#$::RD_HINT         = 1;
+$::RD_HINT         = 1;
 #$::RD_TRACE        = 1;
 #$::RD_AUTOSTUB     = 1;
 #$::RD_AUTOACTION   = 1;
@@ -29,13 +29,30 @@ sub parse {
    [@ret];
 }
 
-sub get_rule {
+sub converter {
+   my $self = shift;
+   if(@_) {
+      $self->{parser}->{converter} = shift;
+      return $self
+   }
+   $self->{parser}->{converter}
+}
+
+sub rule_header {
+   my $self = shift;
+
    return << 'END'
       {
          my @code_functions = (qw/bla/);
          my @code_vars      = ();
       }
-      
+END
+}
+
+sub get_rule {
+   my $self = shift;
+
+   return $self->rule_header . << 'END'
       word: /\w+/
       {$return = $item[-1]}
       
@@ -48,6 +65,7 @@ sub get_rule {
       
       declaration: word ":" word(s /\s*,\s*/)
       {
+         $thisparser->{converter}->add_type($item{word});
          push @code_vars, @{ $item{"word(s)"} };
          $return = [ map { {declair => [$item{word}, $_] } } @{ $item{"word(s)"} } ]
       }

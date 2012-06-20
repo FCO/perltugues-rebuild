@@ -4,18 +4,32 @@ use perltugues::PerlWriter;
 
 sub new {
    my $class = shift;
+   my $ns_types = "perltugues::Type::*";
    my $data = {
       parser   => perltugues::Parser->new,
-      writer   => perltugues::PerlWriter->new(ns_types => "perltugues::Type::*"),
+      writer   => perltugues::PerlWriter->new(ns_types => $ns_types),
+      ns_types => $ns_types,
+      types    => {},
    };
-   bless $data, $class;
+   my $self = bless $data, $class;
+   $self->{parser}->converter($self);
+   $self
+}
+
+sub add_type {
+   my $self = shift;
+   my $type = shift;
+
+   (my $ns_type = $self->{ns_types}) =~ s/\*/$type/g;
+
+   $self->{types}->{$ns_type}++
 }
 
 sub convert {
    my $self = shift;
    my $code = shift;
-   my $tree = perltugues::Parser->new->parse($code);
-   my @new_code;
+   my $tree = $self->{parser}->parse($code);
+   my @new_code = $self->{writer}->write_includes(keys %{ $self->{types} });
    for my $cmd(@$tree) {
       push @new_code, $self->convert_command($cmd);
    }

@@ -55,4 +55,11 @@ sub declair {
 sub function_call {
 }
 
+sub write_includes {
+   my $self = shift;
+   my @inc  = @_;
+
+   map{"use $_;$/"} @inc
+}
+
 42
