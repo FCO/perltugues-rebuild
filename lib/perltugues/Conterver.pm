@@ -29,7 +29,8 @@ sub convert {
    my $self = shift;
    my $code = shift;
    my $tree = $self->{parser}->parse($code);
-   my @new_code = $self->{writer}->write_includes(keys %{ $self->{types} });
+   $self->{writer}->write_includes(keys %{ $self->{types} });
+   my @new_code = $self->{writer}->begin;
    for my $cmd(@$tree) {
       push @new_code, $self->convert_command($cmd);
    }

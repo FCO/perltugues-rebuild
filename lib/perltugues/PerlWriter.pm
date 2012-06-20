@@ -14,6 +14,19 @@ sub new {
    bless $data, $class
 }
 
+sub begin {
+   my $self = shift;
+   my @ret = (<<'END');
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+END
+   push @ret, map{"use $_;$/"} @{ $self->{includes} };
+   @ret, $/
+}
+
 sub ident_incr {
    my $self = shift;
    $self->{ident}++;
@@ -57,9 +70,7 @@ sub function_call {
 
 sub write_includes {
    my $self = shift;
-   my @inc  = @_;
-
-   map{"use $_;$/"} @inc
+   $self->{includes} = [@_];
 }
 
 42
