@@ -1,5 +1,6 @@
 package perltugues::Parser;
 
+use utf8;
 use Parse::RecDescent;
 use Data::Dumper;
 

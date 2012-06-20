@@ -1,4 +1,5 @@
 package perltugues;
+use utf8;
 
 use 5.006;
 use strict;

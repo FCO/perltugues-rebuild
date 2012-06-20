@@ -1,14 +1,20 @@
 package perltugues::PerlWriter;
+use utf8;
 
 use base "perltugues::Writer";
 
 sub begin {
    my $self = shift;
-   my @ret = (<<'END');
+   my $rand = int rand 10000;
+   my $time = time;
+   my @ret  = (<<"END");
 #!/usr/bin/perl
 
+use utf8;
 use strict;
 use warnings;
+
+package perltugues::AreaSegura::Das${time}::Numero${rand};
 
 END
    push @ret, map{"use $_;$/"} @{ $self->{includes} };

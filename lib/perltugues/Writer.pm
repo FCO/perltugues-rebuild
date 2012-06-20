@@ -1,4 +1,5 @@
 package perltugues::Writer;
+use utf8;
 use Carp;
 
 sub new {

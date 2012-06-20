@@ -6,6 +6,7 @@ perltugues::Tipo::inteiro - Tipo do pragma pertugues
 
 
 package perltugues::Tipo::inteiro;
+use utf8;
 
 use perltugues::Tipo;
 my $VERSION= 0.1;

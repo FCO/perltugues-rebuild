@@ -6,6 +6,7 @@ perltugues::Tipo::caracter - Tipo do pragma pertugues
 
 
 package perltugues::Tipo::caracter;
+use utf8;
 
 use perltugues::Tipo;
 

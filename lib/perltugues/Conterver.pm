@@ -1,4 +1,5 @@
 package perltugues::Converter;
+use utf8;
 use perltugues::Parser;
 use perltugues::PerlWriter;
 
