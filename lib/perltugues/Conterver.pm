@@ -15,9 +15,11 @@ sub convert {
    my $self = shift;
    my $code = shift;
    my $tree = perltugues::Parser->new->parse($code);
+   my @new_code;
    for my $cmd(@$tree) {
-      $self->convert_command($cmd);
+      push @new_code, $self->convert_command($cmd);
    }
+   join "", @new_code
 }
 
 sub convert_command {
@@ -29,7 +31,7 @@ sub convert_command {
    } elsif(ref $tree eq "HASH") {
       for my $cmd(keys %$tree) {
          my @pars = $self->convert_command($tree->{$cmd});
-         print $self->{writer}->get_code_for($cmd, @pars), $/;
+         return $self->{writer}->get_code_for($cmd, @pars), $/;
       }
    }
 }
