@@ -1,18 +1,6 @@
 package perltugues::PerlWriter;
 
-sub new {
-   my $class = shift;
-   my %pars  = @_;
-   my $data = {
-      ident      => 0,
-      ident_unit => "   ",
-      ns_types   => "*",
-   };
-   for my $key(keys %$data) {
-      $data->{$key} = $pars{$key} if exists $pars{$key}
-   }
-   bless $data, $class
-}
+use base "perltugues::Writer";
 
 sub begin {
    my $self = shift;
