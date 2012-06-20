@@ -4,7 +4,7 @@ use perltugues::PerlWriter;
 
 sub new {
    my $class = shift;
-   my $ns_types = "perltugues::Type::*";
+   my $ns_types = "perltugues::Tipo::*";
    my $data = {
       parser   => perltugues::Parser->new,
       writer   => perltugues::PerlWriter->new(ns_types => $ns_types),
