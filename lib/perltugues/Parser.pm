@@ -54,7 +54,7 @@ sub get_rule {
    my $self = shift;
 
    return $self->rule_header . << 'END'
-      word: /\w+/
+      word: /[\p{L}\p{M}\p{N}]+/
       {$return = $item[-1]}
       
       code: command(s /\s*;\s*/)
@@ -64,7 +64,7 @@ sub get_rule {
       cmd_not_assign: cmd_op | const | declaration | function | var
       cmd_not_op: assign | const | declaration | function | var
       
-      declaration: word ":" word(s /\s*,\s*/)
+      declaration: word ":" word(s /,/)
       {
          $thisparser->{converter}->add_type($item{word});
          push @code_vars, @{ $item{"word(s)"} };
@@ -88,7 +88,7 @@ sub get_rule {
       assign:  var<commit> '=' cmd_not_assign
       {$return = {assign => [$item{var}, $item[-1]]}}
       
-      function: word '(' command(s? /\s*,\s*/) ')'
+      function: word '(' command(s? /,/) ')'
       {$return = {function_call => [$item{word}, $item[-2]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
