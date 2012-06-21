@@ -106,11 +106,15 @@ sub get_rule {
       { $return = {block => $item[2]->[0]} }
       {print "block$/"}
 
-      iteration: for_cmd
+      iteration: for_cmd | foreach_cmd
 
       for_cmd: 'para' '(' command(s? /,/) ';' command(s? /,/) ';' command(s? /,/) ')' block
       { $return = {for_cmd => [@item[3, 5, 7, 9]]} }
       { print "FOR$/" }
+
+      foreach_cmd: 'para_cada' var '(' command(s /,/) ')' block
+      { $return = {foreach_cmd => [@item[2, 4, 6]]} }
+      { print "FOREACH$/" }
 
 
       

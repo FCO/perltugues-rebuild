@@ -44,6 +44,13 @@ sub ident {
    $self->{indet_unit} x $self->{ident}
 }
 
+sub format_code {
+   my $self = shift;
+   my $code = shift;
+
+   $self->ident . $code
+}
+
 sub declair {
    my $self    = shift;
    my $type    = shift;
@@ -93,6 +100,32 @@ sub subtract {
    my $par2 = shift;
 
    "$par1 - $par2"
+}
+
+sub block {
+   my $self = shift;
+   my @code = shift;
+
+   $self->ident_incr;
+
+   my $ret = join $/, "{", map({$self->format_code($_)} @code) , "}"; 
+
+   $self->ident_decr;
+   $ret
+}
+
+sub for_cmd {
+   my $self = shift;
+   my($init, $test, $incr, $block) = @_;
+
+   "for($init; $test; $incr) $block"
+}
+
+sub foreach_cmd {
+   my $self = shift;
+   my($var, $list, $block) = @_;
+
+   "foreach my $var ($list) $block"
 }
 
 sub imprima {
