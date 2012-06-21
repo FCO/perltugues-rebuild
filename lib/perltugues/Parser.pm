@@ -60,8 +60,11 @@ sub get_rule {
       word: /[\p{L}\p{M}\p{N}]+/
       {$return = $item[-1]}
       
-      code: command(s /;/)
+      #code: command(s)
+      code: cmd_or_blk(s)
       {$return = $item[-1]}
+
+      cmd_or_blk: command(s? /;/) | block(s?)
       
       command:    iteration | assign | block | cmd_op | const | declaration | function | imprima | var
       cmd_not_op: iteration | assign | block | const | declaration | function | imprima | var
