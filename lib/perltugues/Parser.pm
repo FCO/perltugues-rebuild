@@ -7,7 +7,7 @@ use Data::Dumper;
 #$::RD_ERRORS       = 1;
 #$::RD_WARN         = 1;
 $::RD_HINT         = 1;
-$::RD_TRACE        = 1;
+#$::RD_TRACE        = 1;
 #$::RD_AUTOSTUB     = 1;
 #$::RD_AUTOACTION   = 1;
 
@@ -80,6 +80,7 @@ sub get_rule {
       const_str: q_const_str | const_char
       
       const: /\d+/ | const_str
+      {print "constant => $item[1]$/"}
       {$return = { constant => [ $item[1] ] }}
       
       var: word
