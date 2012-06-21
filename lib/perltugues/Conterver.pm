@@ -13,9 +13,12 @@ sub new {
       types    => {},
    };
    my $self = bless $data, $class;
-   $self->{parser}->converter($self);
+   $self->parser->converter($self);
    $self
 }
+
+sub parser {shift->{parser}}
+sub writer {shift->{writer}}
 
 sub add_type {
    my $self = shift;
@@ -29,9 +32,9 @@ sub add_type {
 sub convert {
    my $self = shift;
    my $code = shift;
-   my $tree = $self->{parser}->parse($code);
-   $self->{writer}->write_includes(keys %{ $self->{types} });
-   my @new_code = $self->{writer}->begin;
+   my $tree = $self->parser->parse($code);
+   $self->writer->write_includes(keys %{ $self->{types} });
+   my @new_code = $self->writer->begin;
    for my $cmd(@$tree) {
       push @new_code, $self->convert_command($cmd);
    }

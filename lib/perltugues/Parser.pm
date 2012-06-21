@@ -66,9 +66,9 @@ sub get_rule {
       
       declaration: word ":" word(s /,/)
       {
-         $thisparser->{converter}->add_type($item{word});
+         $thisparser->{converter}->add_type($item[1]);
          push @code_vars, @{ $item{"word(s)"} };
-         $return = [ map { {declair => [$item{word}, $_] } } @{ $item{"word(s)"} } ]
+         $return = [ map { {declair => [$item[1], $_] } } @{ $item[3] } ]
       }
       
       const_char: "'" /[^']|\\./ "'"
