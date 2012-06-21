@@ -61,8 +61,8 @@ sub get_rule {
       {$return = $item[-1]}
       
       command: assign | cmd_not_assign
-      cmd_not_assign: cmd_op | const | declaration | function | var
-      cmd_not_op: assign | const | declaration | function | var
+      cmd_not_assign: block | cmd_op | const | declaration | function | var
+      cmd_not_op: block | assign | const | declaration | function | var
       
       declaration: word ":" word(s /,/)
       {

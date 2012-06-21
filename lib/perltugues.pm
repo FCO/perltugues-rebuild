@@ -12,8 +12,13 @@ FILTER {
    my $class = shift;
    my %par   = @_;
 
+   my $conv = perltugues::Converter->new;
 
-   $_ = perltugues::Converter->new->convert($_);
+   if($par{ DEBUG_PARSER }) {
+      $conv->debug_parser;
+   }
+
+   $_ = $conv->convert($_);
 
    if($par{ DEBUG }) {
       Perl::Tidy::perltidy(source => \$_, destination => \$_)

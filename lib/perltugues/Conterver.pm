@@ -2,23 +2,28 @@ package perltugues::Converter;
 use utf8;
 use perltugues::Parser;
 use perltugues::PerlWriter;
+use Data::Dumper ();
 
 sub new {
    my $class = shift;
    my $ns_types = "perltugues::Tipo::*";
    my $data = {
-      parser   => perltugues::Parser->new,
-      writer   => perltugues::PerlWriter->new(ns_types => $ns_types),
-      ns_types => $ns_types,
-      types    => {},
+      parser       => perltugues::Parser->new,
+      writer       => perltugues::PerlWriter->new(ns_types => $ns_types),
+      ns_types     => $ns_types,
+      types        => {},
+      DEBUG_PARSER => 0,
+      dumper       => sub{print Data::Dumper::Dumper @_},
    };
    my $self = bless $data, $class;
+   $self->{dumper} = sub{Data::Printer::p(@_)} if eval "require Data::Printer";
    $self->parser->converter($self);
    $self
 }
 
-sub parser {shift->{parser}}
-sub writer {shift->{writer}}
+sub debug_parser {shift->{DEBUG_PARSER} = 1};
+sub parser       {shift->{parser}}
+sub writer       {shift->{writer}}
 
 sub add_type {
    my $self = shift;
@@ -33,6 +38,7 @@ sub convert {
    my $self = shift;
    my $code = shift;
    my $tree = $self->parser->parse($code);
+   $self->{dumper}->($tree) if $self->{DEBUG_PARSER};
    $self->writer->write_includes(keys %{ $self->{types} });
    my @new_code = $self->writer->begin;
    for my $cmd(@$tree) {
