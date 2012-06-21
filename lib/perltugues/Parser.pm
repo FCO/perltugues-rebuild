@@ -78,8 +78,16 @@ sub get_rule {
       {$return = $item{quote} . $item[2] . $item{quote} }
       
       const_str: q_const_str | const_char
+
+      const_num: /\d+/
+      {print "constant_num => $item[1]$/"}
+      {$return = $item[1]}
+
+      const_real: /\d*.\d+/
+      {print "constant_real => $item[1]$/"}
+      {$return = $item[1]}
       
-      const: /\d+/ | const_str
+      const: const_num | const_real | const_str
       {print "constant => $item[1]$/"}
       {$return = { constant => [ $item[1] ] }}
       
