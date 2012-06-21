@@ -7,7 +7,7 @@ use Data::Dumper;
 #$::RD_ERRORS       = 1;
 #$::RD_WARN         = 1;
 $::RD_HINT         = 1;
-#$::RD_TRACE        = 1;
+$::RD_TRACE        = 1;
 #$::RD_AUTOSTUB     = 1;
 #$::RD_AUTOACTION   = 1;
 
@@ -57,7 +57,7 @@ sub get_rule {
       word: /[\p{L}\p{M}\p{N}]+/
       {$return = $item[-1]}
       
-      code: command(s /\s*;\s*/)
+      code: command(s /;/)
       {$return = $item[-1]}
       
       command: assign | cmd_not_assign
@@ -66,7 +66,7 @@ sub get_rule {
       
       declaration: word ":" word(s /,/)
       {
-         $thisparser->{converter}->add_type($item[1]);
+         $thisparser->{converter}->add_type($item[1]) if $thisparser->{converter} and $thisparser->{converter}->can("add_type");
          push @code_vars, @{ $item{"word(s)"} };
          $return = [ map { {declair => [$item[1], $_] } } @{ $item[3] } ]
       }
@@ -80,6 +80,7 @@ sub get_rule {
       const_str: q_const_str | const_char
       
       const: /\d+/ | const_str
+      {$return = { constant => [ $item[1] ] }}
       
       var: word
       {$return = $item[-1]}
@@ -92,7 +93,7 @@ sub get_rule {
       {$return = {function_call => [$item{word}, $item[-2]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
-      block: '{' code '}'
+      block: '{' code(?) '}'
       
       add: '+'
       {$item[0]}
