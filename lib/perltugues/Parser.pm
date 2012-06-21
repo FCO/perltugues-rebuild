@@ -63,8 +63,8 @@ sub get_rule {
       code: command(s /;/)
       {$return = $item[-1]}
       
-      command: assign | block | cmd_op | const | declaration | function | imprima | var
-      cmd_not_op: block | assign | const | declaration | function | imprima | var
+      command:    iteration | assign | block | cmd_op | const | declaration | function | imprima | var
+      cmd_not_op: iteration | assign | block | const | declaration | function | imprima | var
       
       declaration: word ":" word(s /,/)
       {
@@ -100,6 +100,16 @@ sub get_rule {
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
       block: '{' code(?) '}'
+      { $return = {block => $item[2]->[0]} }
+      {print "block$/"}
+
+      iteration: for_cmd
+
+      for_cmd: 'para' '(' command(s? /,/) ';' command(s? /,/) ';' command(s? /,/) ')' block
+      { $return = {for_cmd => [@item[3, 5, 7, 9]]} }
+      { print "FOR$/" }
+
+
       
       add: '+'
       {$item[0]}
