@@ -44,14 +44,6 @@ sub ident {
    $self->{indet_unit} x $self->{ident}
 }
 
-sub get_code_for {
-   my $self = shift;
-   my $meth = shift;
-
-   my $ret = $self->ident . $self->$meth(@_);
-   $ret
-}
-
 sub declair {
    my $self    = shift;
    my $type    = shift;

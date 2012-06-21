@@ -20,4 +20,13 @@ sub new {
    $self
 }
 
+sub get_code_for {
+   my $self = shift;
+   my $meth = shift;
+
+   my $ret = $self->ident . $self->$meth(@_);
+   $ret
+}
+
+
 42
