@@ -21,9 +21,10 @@ sub new {
    $self
 }
 
-sub debug_parser {shift->{DEBUG_PARSER} = 1};
-sub parser       {shift->{parser}}
-sub writer       {shift->{writer}}
+sub debug_parser       {shift->{DEBUG_PARSER} = 1};
+sub debug_parser_trace {shift->parser->debug_trace};
+sub parser             {shift->{parser}}
+sub writer             {shift->{writer}}
 
 sub add_type {
    my $self = shift;
@@ -44,7 +45,7 @@ sub convert {
    for my $cmd(@$tree) {
       push @new_code, $self->convert_command($cmd);
    }
-   join "", @new_code
+   join ";$/", @new_code
 }
 
 sub convert_command {
@@ -52,12 +53,19 @@ sub convert_command {
    my $tree = shift;
 
    if(ref $tree eq "ARRAY"){
-      return @$tree;
-   } elsif(ref $tree eq "HASH") {
-      for my $cmd(keys %$tree) {
-         my @pars = $self->convert_command($tree->{$cmd});
-         return $self->{writer}->get_code_for($cmd, @pars), $/;
+      #my @ret = map {$self->convert_command($_)} @$tree;
+      my @ret;
+      for my $val(@$tree) {
+         my ($pret) = $self->convert_command($val);
+         push @ret, $pret;
       }
+      return @ret
+   } elsif(ref $tree eq "HASH") {
+      my ($cmd) = keys %$tree;
+      my @pars = $self->convert_command($tree->{$cmd});
+      return $self->writer->get_code_for($cmd, @pars), $/;
+   } else {
+      return $tree
    }
 }
 

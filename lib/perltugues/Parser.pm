@@ -4,10 +4,9 @@ use utf8;
 use Parse::RecDescent;
 use Data::Dumper;
 
-#$::RD_ERRORS       = 1;
-#$::RD_WARN         = 1;
+$::RD_ERRORS       = 1;
+$::RD_WARN         = 1;
 $::RD_HINT         = 1;
-#$::RD_TRACE        = 1;
 #$::RD_AUTOSTUB     = 1;
 #$::RD_AUTOACTION   = 1;
 
@@ -16,6 +15,10 @@ sub new {
    $self = bless {}, $class;
    $self->{parser} = Parse::RecDescent->new($self->get_rule);
    $self
+}
+
+sub debug_trace {
+   $::RD_TRACE        = 1;
 }
 
 sub parse {
@@ -60,9 +63,8 @@ sub get_rule {
       code: command(s /;/)
       {$return = $item[-1]}
       
-      command: assign | cmd_not_assign
-      cmd_not_assign: block | cmd_op | const | declaration | function | var
-      cmd_not_op: block | assign | const | declaration | function | var
+      command: assign | block | cmd_op | const | declaration | function | imprima | var
+      cmd_not_op: block | assign | const | declaration | function | imprima | var
       
       declaration: word ":" word(s /,/)
       {
@@ -78,21 +80,20 @@ sub get_rule {
       {$return = {const_str => $item[2]} }
       
       const_int: /\d+/
-      {print "constant_num => $item[1]$/"}
       {$return = {const_int => $item[1]}}
 
       const_real: /\d*[\.]\d+/
-      {print "constant_real => $item[1]$/"}
       {$return = {const_real => $item[1]}}
       
       const: const_real | const_int | const_str | const_char
+      {print "const$/";}
       
       var: word
       {$return = {var => $item[1]}}
       {$return = undef unless grep {$item[1] eq $_} @code_vars }
       
-      assign:  var<commit> '=' cmd_not_assign
-      {$return = {assign => [$item{var}, $item[-1]]}}
+      assign:  var<commit> '=' command
+      {$return = {assign => [$item[1], $item[4]]}}
       
       function: word '(' command(s? /,/) ')'
       {$return = {function_call => [$item{word}, $item[-2]] } }
@@ -114,6 +115,8 @@ sub get_rule {
       cmd_op: cmd_not_op op command
       { $return = {$item[2] => [$item[1], $item[3]]} }
    
+      imprima: 'imprima(' command ')'
+      { $return = {imprima => $item[2]} }
    
 END
 }

@@ -14,6 +14,8 @@ use utf8;
 use strict;
 use warnings;
 
+\$SIG{__DIE__} = sub{ warn "ERRO!!!\$/"};
+
 package perltugues::AreaSegura::Das${time}::Numero${rand};
 
 END
@@ -46,7 +48,8 @@ sub get_code_for {
    my $self = shift;
    my $meth = shift;
 
-   $self->ident . $self->$meth(@_)
+   my $ret = $self->ident . $self->$meth(@_);
+   $ret
 }
 
 sub declair {
@@ -56,10 +59,55 @@ sub declair {
 
    (my $ns_type = $self->{ns_types}) =~ s/\*/$type/g;
 
-   "my \$$varname = $ns_type->new;"
+   "my \$$varname = $ns_type->new"
 }
 
 sub function_call {
+}
+
+sub var {
+   my $self = shift;
+   my $name = shift;
+
+   "\$$name"
+}
+
+sub const_int {
+   my $self = shift;
+   my $val  = shift;
+
+   $val
+}
+
+sub assign {
+   my $self = shift;
+   my $var  = shift;
+   my $data = shift;
+
+   "${var}->vale($data)"
+}
+
+sub add {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 + $par2"
+}
+
+sub subtract {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 - $par2"
+}
+
+sub imprima {
+   my $self = shift;
+   my $par  = shift;
+
+   "print $par";
 }
 
 sub write_includes {
