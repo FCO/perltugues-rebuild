@@ -72,28 +72,24 @@ sub get_rule {
       }
       
       const_char: "'" /[^']|\\./ "'"
-      {$return = $item{quote} . $item[2] . $item{quote} }
+      {$return = {const_char => $item[2]} }
       
-      q_const_str: '"' /[^"]*/ '"'
-      {$return = $item{quote} . $item[2] . $item{quote} }
+      const_str: '"' /[^"]*/ '"'
+      {$return = {const_str => $item[2]} }
       
-      const_str: q_const_str | const_char
-
-      const_num: /\d+/
+      const_int: /\d+/
       {print "constant_num => $item[1]$/"}
-      {$return = $item[1]}
+      {$return = {const_int => $item[1]}}
 
-      const_real: /\d*.\d+/
+      const_real: /\d*[\.]\d+/
       {print "constant_real => $item[1]$/"}
-      {$return = $item[1]}
+      {$return = {const_real => $item[1]}}
       
-      const: const_num | const_real | const_str
-      {print "constant => $item[1]$/"}
-      {$return = { constant => [ $item[1] ] }}
+      const: const_real | const_int | const_str | const_char
       
       var: word
-      {$return = $item[-1]}
-      {$return = undef unless grep {$item[-1] eq $_} @code_vars }
+      {$return = {var => $item[1]}}
+      {$return = undef unless grep {$item[1] eq $_} @code_vars }
       
       assign:  var<commit> '=' cmd_not_assign
       {$return = {assign => [$item{var}, $item[-1]]}}
