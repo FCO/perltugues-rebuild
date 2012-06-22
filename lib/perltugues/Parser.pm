@@ -66,9 +66,9 @@ sub get_rule {
 
       cmd_or_blk: command(s? /;/) | block(s?)
       
-      command:      declaration | const | iteration | assign | block | cmd_op | function | imprima | list | var
-      cmd_not_op:   declaration | const | iteration | assign | block |          function | imprima |        var
-      cmd_not_list: declaration | const | iteration | assign | block | cmd_op | function | imprima |        var
+      command:      declaration | const | iteration | conditional | assign | block | cmd_op | function | imprima | list | var
+      cmd_not_op:   declaration | const | iteration | conditional | assign | block |          function | imprima |        var
+      cmd_not_list: declaration | const | iteration | conditional | assign | block | cmd_op | function | imprima |        var
       
       declaration: word ":" word(s /,/)
       {
@@ -106,6 +106,8 @@ sub get_rule {
       { $return = {block => $item[2]->[0]} }
 
       condition: declaration | const | assign | cmd_op | function | var
+
+      conditional: if_cmd | unless_cmd
 
       if_cmd:     'se' '(' condition ')' block
       { $return = {if_cmd => [@item[3, 5]]} }

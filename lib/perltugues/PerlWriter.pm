@@ -158,6 +158,20 @@ sub foreach_cmd {
    "foreach my $var (" . join(", ", $list) . ") $block"
 }
 
+sub if_cmd {
+   my $self = shift;
+   my($cond, $block) = @_;
+
+   "if ($cond) $block"
+}
+
+sub unless_cmd {
+   my $self = shift;
+   my($cond, $block) = @_;
+
+   "unless ($cond) $block"
+}
+
 sub imprima {
    my $self = shift;
    my $par  = shift;
