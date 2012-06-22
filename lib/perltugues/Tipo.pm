@@ -1,87 +1,39 @@
-=head1 NAME
-
-perltugues::Tipo - tipo do pragma pertugues
-
-=cut
-
-
 package perltugues::Tipo;
-use utf8;
-my $VERSION= 0.1;
+use Carp;
 
-use strict;
+our $tipo = "generico";
 
-use overload
-   '""'  => sub {
-                my $r    = shift;
-                $r->{valor};
-              },
-   '0+'  => sub {
-                my $r    = shift;
-                $r->{valor};
-              },
-   'x'  => sub {
-                my $r    = shift;
-                $r->{valor} x shift;
-              },
-   '.'  => sub {
-                my $r    = shift;
-                $r->{valor} . shift;
-              },
-   '-'  => sub {
-                my $r    = shift;
-                $r->{valor} - shift;
-              },
-   '+'  => sub {
-                my $r    = shift;
-                $r->{valor} + shift;
-              },
-   '*'  => sub {
-                my $r    = shift;
-                $r->{valor} * shift;
-              },
-   '/'  => sub {
-                my $r    = shift;
-                $r->{valor} / shift;
-              },
-   '**'  => sub {
-                my $r    = shift;
-                $r->{valor} ** shift;
-              };
-sub new {
-   my $class   = shift;
-   my $r;
-   $r->{valor} = 0;
-   $r->{regex} = '^$';
-   bless $r, $class
+sub TIESCALAR {
+   my $class = shift;
+   bless {
+      valor => undef,
+   }, $class;
 }
-sub vale{
-   my $r     = shift;
-   my $tmp   = shift;
-   my $regex = $r->{regex};
-   die qq/"$tmp" /, $r->{msg}, $/ unless $tmp =~ /$regex/;
-   $r->{valor} = $tmp;
+
+sub STORE {
+   my $self = shift;
+   my $val  = shift;
+   $self->test($val);
+   $self->{valor} = $val;
 }
-42;
 
-=over
+sub FETCH {
+   my $self = shift;
+   my $val  = shift;
+   $self->test($self->{valor});
+   $self->{valor}
+}
 
-=item vale()
+sub test {
+   my $self   = shift;
+   my $val    = shift;
+   my $ns     = ref $self;
+   my $nstipo = "${ns}::tipo";
+   $self->validator($val) || croak $self->{msg} || "valor '$val' não corresponde ao tipo '$$nstipo'";
+}
 
-metodo new...
+sub validator {
+   0
+}
 
-=cut
-
-=back
-
-
-=over
-
-=item new()
-
-metodo new...
-
-=back
-
-=cut
-
+42

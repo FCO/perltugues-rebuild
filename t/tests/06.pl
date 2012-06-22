@@ -1,1 +1,1 @@
-my $i = perltugues::Tipo::real->new; my $j = perltugues::Tipo::real->new
+tie my $i, 'perltugues::Tipo::real'; tie my $j, 'perltugues::Tipo::real'

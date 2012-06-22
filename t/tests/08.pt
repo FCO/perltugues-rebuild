@@ -1,5 +1,4 @@
 inteiro: i, j;
-
 j = 5;
 para cada i (1, 2, j) {
    imprima(i)

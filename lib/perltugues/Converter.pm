@@ -70,7 +70,7 @@ sub convert {
       $self->dumper($tree);
    }
    $self->writer->write_includes(keys %{ $self->{types} });
-   my @new_code = $self->writer->begin || ();
+   my @new_code = $self->writer->begin;
    for my $cmd(@$tree) {
       $cmd = $self->prepare($cmd);
       push @new_code, $self->convert_command($cmd);

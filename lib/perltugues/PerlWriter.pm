@@ -9,12 +9,15 @@ sub begin {
    my $func = shift;
 
    if(not defined $func) {
-      $self->{begin_func} = $func;
-   } elsif(defined $self->{begin_func}) {
-      $self->{begin_func}->();
+      if(defined $self->{begin_func}) {
+         return $self->{begin_func}->();
+      } else {
+         return $self->default_begin;
+      }
    } else {
-      $self->begin;
+      $self->{begin_func} = $func;
    }
+   return
 }
 
 sub default_begin {
@@ -72,7 +75,7 @@ sub declair {
 
    (my $ns_type = $self->{ns_types}) =~ s/\*/$type/g;
 
-   "my \$$varname = $ns_type->new"
+   "tie my \$$varname, '$ns_type'"
 }
 
 sub function_call {
@@ -112,7 +115,7 @@ sub assign {
    my $var  = shift;
    my $data = shift;
 
-   "${var}->vale($data)"
+   "${var} = $data"
 }
 
 sub add {

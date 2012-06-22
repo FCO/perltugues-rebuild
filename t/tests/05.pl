@@ -1,1 +1,1 @@
-my $i = perltugues::Tipo::inteiro->new
+tie my $i, 'perltugues::Tipo::inteiro'

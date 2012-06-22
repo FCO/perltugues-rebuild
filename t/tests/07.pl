@@ -1,1 +1,1 @@
-my $i = perltugues::Tipo::inteiro->new; $i->vale(42);
+tie my $i, 'perltugues::Tipo::inteiro'; $i = 42;
