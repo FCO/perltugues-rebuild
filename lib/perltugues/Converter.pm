@@ -24,6 +24,7 @@ sub new {
    $self
 }
 
+sub debug_input        {shift->{DEBUG_INPUT} = 1};
 sub debug_parser       {shift->{DEBUG_PARSER} = 1};
 sub debug_preparer     {shift->{DEBUG_PREPARER} = 1};
 sub debug_parser_trace {shift->parser->debug_trace};
@@ -60,6 +61,7 @@ sub prepare {
 sub convert {
    my $self = shift;
    my $code = shift;
+   print $code, $/ if $self->{DEBUG_INPUT};
    $code =~ s/\s+/ /gsm;
    $code =~ s/^\s+|\s+$//gsm;
    my $tree = $self->parser->parse($code);

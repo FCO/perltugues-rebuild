@@ -107,6 +107,17 @@ sub get_rule {
 
       condition: declaration | const | assign | cmd_op | function | var
 
+      if_cmd:     'se' '(' condition ')' block
+      { $return = {if_cmd => [@item[3, 5]]} }
+
+      nao: 'nao' | 'não' | 'n' | 'ñ'
+      que: 'que' | 'q'
+
+      unless_names: 'a' nao 'ser' que
+
+      unless_cmd: unless_names '(' condition ')' block
+      { $return = {unless_cmd => [@item[3, 5]]} }
+
       iteration: for_cmd | foreach_cmd
 
       for_cmd: 'para' '(' command(s? /,/) ';' condition(?) ';' command(s? /,/) ')' block

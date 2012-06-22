@@ -4,18 +4,34 @@ use perltugues::Converter;
 
 my %par = (
    "so-traduzir"    => 0,
+   "debug-input"    => 0,
    "debug-parser"   => 0,
    "debug-preparer" => 0,
+   "e"              => 0,
 );
 my @new_argv;
 
 while (my $index = shift @ARGV) {
    if(substr($index, 0, 1) eq "-") {
       my $val = $index;
+      my $long = 0;
+      $long = 1 if(substr($index, 0, 2) eq "--");
       $val =~ s/^-+//;
 
-      die "Parametro '$val' não reconhecido" unless exists $par{$val};
-      $par{$val}++;
+      my($name, $value);
+      if($long) {
+         ($name, $value) = split /=/, $val;
+      } else {
+         ($name, $value) = $val =~ /^(\w)(.*)$/g;
+      }
+
+      if(defined $value) {
+         $par{$name} = $value
+      } else {
+         $par{$name}++;
+      }
+      die "Parametro '$name' não reconhecido" unless exists $par{$name};
+      last if $name eq 'e';
    } else {
       unshift @ARGV, $index;
       last;
@@ -23,12 +39,17 @@ while (my $index = shift @ARGV) {
 }
 
 my $code;
-while(<>) {
-   $code .= $_;
+if($par{e}) {
+   $code = $par{e};
+} else {
+   while(<>) {
+      $code .= $_;
+   }
 }
 
 my $converter = perltugues::Converter->new;
 
+$converter->debug_input    if $par{"debug-input"};
 $converter->debug_parser   if $par{"debug-parser"};
 $converter->debug_preparer if $par{"debug-preparer"};
 
