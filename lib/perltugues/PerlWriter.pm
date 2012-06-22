@@ -171,6 +171,54 @@ sub list_comma {
    join(", ", @pars)
 }
 
+sub less_than {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 < $par2"
+}
+
+sub less_or_eq {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 <= $par2"
+}
+
+sub gratter_than {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 > $par2"
+}
+
+sub gratter_or_eq {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 >= $par2"
+}
+
+sub equal {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 == $par2"
+}
+
+sub not_equal {
+   my $self = shift;
+   my $par1 = shift;
+   my $par2 = shift;
+
+   "$par1 != $par2"
+}
+
 sub write_includes {
    my $self = shift;
    $self->{includes} = [@_];

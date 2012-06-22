@@ -2,14 +2,23 @@
 
 use perltugues::Converter;
 
-my %par;
+my %par = (
+   "so-traduzir"    => 0,
+   "debug-parser"   => 0,
+   "debug-preparer" => 0,
+);
+my @new_argv;
 
-for my $index (0 .. $#ARGV) {
-   if(substr($ARGV[$index], 0, 1) eq "-") {
-      my $val = splice @ARGV, $index, 1;
+while (my $index = shift @ARGV) {
+   if(substr($index, 0, 1) eq "-") {
+      my $val = $index;
       $val =~ s/^-+//;
 
+      die "Parametro '$val' não reconhecido" unless exists $par{$val};
       $par{$val}++;
+   } else {
+      unshift @ARGV, $index;
+      last;
    }
 }
 
@@ -18,7 +27,12 @@ while(<>) {
    $code .= $_;
 }
 
-my $perl_code = perltugues::Converter->new->convert($code);
+my $converter = perltugues::Converter->new;
+
+$converter->debug_parser   if $par{"debug-parser"};
+$converter->debug_preparer if $par{"debug-preparer"};
+
+my $perl_code = $converter->convert($code);
 if($par{"so-traduzir"}) {
    Perl::Tidy::perltidy(source => \$perl_code, destination => \$perl_code)
       if eval "require Perl::Tidy";

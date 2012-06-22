@@ -105,28 +105,41 @@ sub get_rule {
       block: '{' cmd_or_blk(s?) '}'
       { $return = {block => $item[2]->[0]} }
 
+      condition: declaration | const | assign | cmd_op | function | var
+
       iteration: for_cmd | foreach_cmd
 
-      for_cmd: 'para' '(' command(s? /,/) ';' command(s? /,/) ';' command(s? /,/) ')' block
+      for_cmd: 'para' '(' command(s? /,/) ';' condition(?) ';' command(s? /,/) ')' block
       { $return = {for_cmd => [@item[3, 5, 7, 9]]} }
 
       foreach_cmd: ('para cada' | 'para_cada' | 'paraCada') var '(' list ')' block
       { $return = {foreach_cmd => [@item[2, 4, 6]]} }
 
+      add:          '+'
+      {$item[0]}
+      subtract:     '-'
+      {$item[0]}
+      multiply:     '*'
+      {$item[0]}
+      divide:       '/'
+      {$item[0]}
 
+      grater_than:  '>'
+      {$item[0]}
+      less_than:    '<'
+      {$item[0]}
+      grater_or_eq: '>='
+      {$item[0]}
+      less_or_eq: '<='
+      {$item[0]}
+      equal:        '=='
+      {$item[0]}
+      not_equal:    '!='
+      {$item[0]}
       
-      add: '+'
-      {$item[0]}
-      subtract: '-'
-      {$item[0]}
-      multiply: '*'
-      {$item[0]}
-      divide: '/'
-      {$item[0]}
+      op_bin: add | subtract | multiply | divide | grater_than | less_than | grater_or_eq | less_or_eq | equal | not_equal
       
-      op: add | subtract | multiply | divide
-      
-      cmd_op: cmd_not_op op command
+      cmd_op: cmd_not_op op_bin command
       { $return = {$item[2] => [$item[1], $item[3]]} }
    
       imprima: 'imprima(' command ')'

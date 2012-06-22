@@ -1,0 +1,6 @@
+inteiro: i, j;
+
+j = 5;
+para (i = 0; i < j; i = i + 1) {
+   imprima(i)
+}
