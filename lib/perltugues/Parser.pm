@@ -86,7 +86,7 @@ sub get_rule {
       const_int: /\d+/
       {$return = {const_int => $item[1]}}
 
-      const_real: /\d*[\.]\d+/
+      const_real: /\d+,\d+/
       {$return = {const_real => $item[1]}}
       
       const: const_real | const_int | const_str | const_char

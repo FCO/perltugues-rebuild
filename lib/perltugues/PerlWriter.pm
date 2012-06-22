@@ -6,6 +6,19 @@ use base "perltugues::Writer";
 
 sub begin {
    my $self = shift;
+   my $func = shift;
+
+   if(not defined $func) {
+      $self->{begin_func} = $func;
+   } elsif(defined $self->{begin_func}) {
+      $self->{begin_func}->();
+   } else {
+      $self->begin;
+   }
+}
+
+sub default_begin {
+   my $self = shift;
    my $rand = int rand 10000;
    my $time = time;
    my @ret  = (<<"END");
@@ -75,6 +88,14 @@ sub var {
 sub const_int {
    my $self = shift;
    my $val  = shift;
+
+   $val
+}
+
+sub const_real {
+   my $self = shift;
+   my $val  = shift;
+   $val =~ s/,/./;
 
    $val
 }
