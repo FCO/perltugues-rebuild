@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+
+use perltugues::Converter;
+
+my $code;
+while(<>) {
+   $code .= $_;
+}
+
+eval perltugues::Converter->new->convert($code);

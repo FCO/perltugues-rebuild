@@ -12,6 +12,7 @@ WriteMakefile(
       ? ('LICENSE'=> 'perl')
       : ()),
     PL_FILES            => {},
+    EXE_FILES		=> [qw{bin/perltugues}],
     PREREQ_PM => {
         'Test::More'		=> 0,
 	'Parse::RecDescent'	=> 1.967009,

@@ -6,7 +6,7 @@ use strict;
 use warnings;
 
 use Filter::Simple;
-use perltugues::Conterver;
+use perltugues::Converter;
 
 FILTER {
    my $code = $_;
