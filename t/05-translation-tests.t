@@ -15,7 +15,6 @@ diag( "Testing perltugues $perltugues::VERSION, Perl $], $^X" );
 
 for my $test(@tests) {
    (my $wanted = $test) =~ s/\.pt$/.pl/;
-   diag( "comparing $test´s response with '$wanted'..." );
 
    open my $CODE, "<", $test;
    my $perltugues_code = join "", <$CODE>;
