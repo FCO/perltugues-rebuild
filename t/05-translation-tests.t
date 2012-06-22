@@ -30,6 +30,7 @@ for my $test(@tests) {
 sub unident {
    my $code = shift;
    (my $ret = $code) =~ s/\s+/ /gsm;
+   $ret =~ s/^\s+|\s+$//;
    $ret
 }
 

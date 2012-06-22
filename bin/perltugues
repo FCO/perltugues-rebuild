@@ -2,9 +2,27 @@
 
 use perltugues::Converter;
 
+my %par;
+
+for my $index (0 .. $#ARGV) {
+   if(substr($ARGV[$index], 0, 1) eq "-") {
+      my $val = splice @ARGV, $index, 1;
+      $val =~ s/^-+//;
+
+      $par{$val}++;
+   }
+}
+
 my $code;
 while(<>) {
    $code .= $_;
 }
 
-eval perltugues::Converter->new->convert($code);
+my $perl_code = perltugues::Converter->new->convert($code);
+if($par{"so-traduzir"}) {
+   Perl::Tidy::perltidy(source => \$perl_code, destination => \$perl_code)
+      if eval "require Perl::Tidy";
+   print $perl_code, $/
+} else {
+   eval $perl_code;
+}
