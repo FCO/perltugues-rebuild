@@ -31,8 +31,6 @@ use utf8;
 use strict;
 use warnings;
 
-\$SIG{__DIE__} = sub{ warn "ERRO!!!\$/"};
-
 package perltugues::AreaSegura::Das${time}::Numero${rand};
 
 END

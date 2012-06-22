@@ -2,6 +2,7 @@ package perltugues::Tipo;
 use Carp;
 
 our $tipo = "generico";
+our $msg;
 
 sub TIESCALAR {
    my $class = shift;
@@ -29,7 +30,12 @@ sub test {
    my $val    = shift;
    my $ns     = ref $self;
    my $nstipo = "${ns}::tipo";
-   $self->validator($val) || croak $self->{msg} || "valor '$val' não corresponde ao tipo '$$nstipo'";
+   my $error = "valor '$val' não corresponde ao tipo '$$nstipo'";
+   if(defined $msg) {
+      my $data = (val => $val, tipo => $$nstipo);
+      ($error = $msg) =~ s/\[%\s*(\w+)\s*%\]/$data{$1}/ge;
+   }
+   $self->validator($val) || croak $error
 }
 
 sub validator {
