@@ -5,16 +5,15 @@ sub new {
    my $self = bless {}, $class;
 }
 
-sub foreach_cmd {
-   my $self  = shift;
-   my $var   = shift;
-   my $list  = shift;
-   my $block = shift;
+sub prepare_command {
+   my $self = shift;
+   my $cmd  = shift;
 
-   my $new_var = {var => "_"};
-   unshift @{ $block->{block} }, {assign => [$var, $new_var]};
-
-   {foreach_cmd => [$new_var, $list, $block]}
+   return $cmd unless ref $cmd eq "HASH";
+   my ($meth) = keys %$cmd;
+   return $cmd unless $self->can($meth);
+   $self->$meth($cmd)
 }
+
 
 42

@@ -61,13 +61,14 @@ sub get_rule {
       {$return = $item[-1]}
       
       #code: command(s)
-      code: cmd_or_blk(s)
-      {$return = $item[-1]}
+      code: cmd_or_blk(s?) (';')(s?)
+      {$return = $item[1]}
 
       cmd_or_blk: command(s? /;/) | block(s?)
       
-      command:    iteration | assign | block | cmd_op | const | declaration | function | imprima | var
-      cmd_not_op: iteration | assign | block | const | declaration | function | imprima | var
+      command:      declaration | const | iteration | assign | block | cmd_op | function | imprima | list | var
+      cmd_not_op:   declaration | const | iteration | assign | block |          function | imprima |        var
+      cmd_not_list: declaration | const | iteration | assign | block | cmd_op | function | imprima |        var
       
       declaration: word ":" word(s /,/)
       {
@@ -89,7 +90,6 @@ sub get_rule {
       {$return = {const_real => $item[1]}}
       
       const: const_real | const_int | const_str | const_char
-      {print "const$/";}
       
       var: word
       {$return = {var => $item[1]}}
@@ -102,19 +102,16 @@ sub get_rule {
       {$return = {function_call => [$item{word}, $item[-2]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
-      block: '{' code(?) '}'
+      block: '{' cmd_or_blk(s?) '}'
       { $return = {block => $item[2]->[0]} }
-      {print "block$/"}
 
       iteration: for_cmd | foreach_cmd
 
       for_cmd: 'para' '(' command(s? /,/) ';' command(s? /,/) ';' command(s? /,/) ')' block
       { $return = {for_cmd => [@item[3, 5, 7, 9]]} }
-      { print "FOR$/" }
 
-      foreach_cmd: 'para_cada' var '(' command(s /,/) ')' block
+      foreach_cmd: ('para cada' | 'para_cada' | 'paraCada') var '(' list ')' block
       { $return = {foreach_cmd => [@item[2, 4, 6]]} }
-      { print "FOREACH$/" }
 
 
       
@@ -134,6 +131,26 @@ sub get_rule {
    
       imprima: 'imprima(' command ')'
       { $return = {imprima => $item[2]} }
+
+      list_comma: <leftop: cmd_not_list ',' command>
+      {
+         sub get_list_comma_item {
+            my $tree = shift;
+            if(ref $tree eq "ARRAY") {
+               return map{get_list_comma_item($_)} @$tree;
+            } elsif(ref $tree eq "HASH") {
+               if(exists $tree->{list_comma}) {
+                  return get_list_comma_item($tree->{list_comma});
+               }
+            }
+            $tree
+         }
+         $return = {list_comma => [get_list_comma_item($item[1])]} 
+      }
+
+      num_list: cmd_not_list '..' cmd_not_list
+
+      list: list_comma | num_list
    
 END
 }

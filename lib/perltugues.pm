@@ -20,6 +20,10 @@ FILTER {
       print "CODE: $code", $/;
    }
 
+   if($par{ DEBUG_PREPARER }) {
+      $conv->debug_preparer;
+   }
+
    if($par{ DEBUG_PARSER }) {
       $conv->debug_parser;
    }

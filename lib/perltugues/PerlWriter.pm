@@ -1,5 +1,6 @@
 package perltugues::PerlWriter;
 use utf8;
+use Data::Printer;
 
 use base "perltugues::Writer";
 
@@ -78,6 +79,13 @@ sub const_int {
    $val
 }
 
+sub const_str {
+   my $self = shift;
+   my $val  = shift;
+
+   qq{"$val"}
+}
+
 sub assign {
    my $self = shift;
    my $var  = shift;
@@ -104,11 +112,11 @@ sub subtract {
 
 sub block {
    my $self = shift;
-   my @code = shift;
+   my @code = @_;
 
    $self->ident_incr;
 
-   my $ret = join $/, "{", map({$self->format_code($_)} @code) , "}"; 
+   my $ret = join $/, "{", map({$self->format_code($_) . ";"} @code) , "}"; 
 
    $self->ident_decr;
    $ret
@@ -125,7 +133,7 @@ sub foreach_cmd {
    my $self = shift;
    my($var, $list, $block) = @_;
 
-   "foreach my $var ($list) $block"
+   "foreach my $var (" . join(", ", $list) . ") $block"
 }
 
 sub imprima {
@@ -133,6 +141,13 @@ sub imprima {
    my $par  = shift;
 
    "print $par";
+}
+
+sub list_comma {
+   my $self = shift;
+   my @pars = @_;
+
+   join(", ", @pars)
 }
 
 sub write_includes {

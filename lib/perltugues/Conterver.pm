@@ -1,7 +1,7 @@
 package perltugues::Converter;
 use utf8;
 use perltugues::Parser;
-use perltugues::Preparer;
+use perltugues::PerlPreparer;
 use perltugues::PerlWriter;
 use Data::Dumper ();
 
@@ -9,13 +9,14 @@ sub new {
    my $class = shift;
    my $ns_types = "perltugues::Tipo::*";
    my $data = {
-      parser       => perltugues::Parser->new,
-      writer       => perltugues::PerlWriter->new(ns_types => $ns_types),
-      preparer     => perltugues::Preparer->new,
-      ns_types     => $ns_types,
-      types        => {},
-      DEBUG_PARSER => 0,
-      dumper       => sub{print Data::Dumper::Dumper @_},
+      parser         => perltugues::Parser->new,
+      writer         => perltugues::PerlWriter->new(ns_types => $ns_types),
+      preparer       => perltugues::PerlPreparer->new,
+      ns_types       => $ns_types,
+      types          => {},
+      DEBUG_PARSER   => 0,
+      DEBUG_PREPARER => 0,
+      dumper         => sub{print Data::Dumper::Dumper @_},
    };
    my $self = bless $data, $class;
    $self->{dumper} = sub{Data::Printer::p(@_)} if eval "require Data::Printer";
@@ -24,10 +25,12 @@ sub new {
 }
 
 sub debug_parser       {shift->{DEBUG_PARSER} = 1};
+sub debug_preparer     {shift->{DEBUG_PREPARER} = 1};
 sub debug_parser_trace {shift->parser->debug_trace};
 sub parser             {shift->{parser}}
 sub writer             {shift->{writer}}
 sub preparer           {shift->{preparer}}
+sub dumper             {my $self = shift; $self->{dumper}->(@_)}
 
 sub add_type {
    my $self = shift;
@@ -43,27 +46,33 @@ sub prepare {
    my $tree = shift;
 
    if(ref $tree eq "ARRAY"){
-      my @ret;
-      for my $val(@$tree) {
-         $val = $self->prepare($val);
-      }
+      #for my $val(@$tree) {
+      #   $val = $self->prepare($val);
+      #}
    } elsif(ref $tree eq "HASH") {
       my ($cmd) = keys %$tree;
-      $tree = $self->preparer->$cmd($tree) if $self->preparer->can($cmd);
-      $tree->{cmd} = $self->prepare($tree->{$cmd});
+      $tree = $self->preparer->prepare_command($tree);
+      $self->prepare($tree->{$cmd});
    }
+   $tree
 }
 
 sub convert {
    my $self = shift;
    my $code = shift;
+   $code =~ s/\s+/ /gsm;
+   $code =~ s/^\s+|\s+$//gsm;
    my $tree = $self->parser->parse($code);
-   $self->{dumper}->($tree) if $self->{DEBUG_PARSER};
-   #$self->prepare($tree);
-   $self->{dumper}->($tree) if $self->{DEBUG_PREPARER};
+   $self->dumper($tree) if $self->{DEBUG_PARSER};
+   $tree = $self->prepare($tree);
+   if($self->{DEBUG_PREPARER}) {
+      print "-" x 30, $/;
+      $self->dumper($tree);
+   }
    $self->writer->write_includes(keys %{ $self->{types} });
    my @new_code = $self->writer->begin;
    for my $cmd(@$tree) {
+      $cmd = $self->prepare($cmd);
       push @new_code, $self->convert_command($cmd);
    }
    join ";$/", @new_code
