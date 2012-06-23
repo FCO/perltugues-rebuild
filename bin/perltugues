@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+use lib 'lib';
 
 use perltugues::Converter;
 
@@ -22,7 +23,7 @@ while (my $index = shift @ARGV) {
       if($long) {
          ($name, $value) = split /=/, $val;
       } else {
-         ($name, $value) = $val =~ /^(\w)(.*)$/g;
+         ($name, $value) = $val =~ /^(\w)(.*)$/gsm;
       }
 
       if(defined $value) {
