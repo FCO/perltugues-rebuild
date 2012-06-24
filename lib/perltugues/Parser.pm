@@ -60,9 +60,8 @@ sub get_rule {
       word: /[\p{L}\p{M}\p{N}]+/
       {$return = $item[-1]}
       
-      #code: command(s)
-      code: cmd_or_blk(s?) (';')(s?)
-      {$return = $item[1]}
+      code: cmd_or_blk(s?) | /;+/
+      { $return = $item[1] }
 
       cmd_or_blk: command(s? /;/) | block(s?)
       
@@ -102,7 +101,7 @@ sub get_rule {
       {$return = {function_call => [$item{word}, $item[-2]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
-      block: '{' cmd_or_blk(s?) '}'
+      block: '{' code (/;+/)(?) '}'
       { $return = {block => $item[2]->[0]} }
 
       condition: declaration | const | assign | cmd_op | function | var

@@ -4,11 +4,12 @@ use lib 'lib';
 use perltugues::Converter;
 
 my %par = (
-   "so-traduzir"    => 0,
-   "debug-input"    => 0,
-   "debug-parser"   => 0,
-   "debug-preparer" => 0,
-   "e"              => 0,
+   "so-traduzir"        => 0,
+   "debug-input"        => 0,
+   "debug-parser"       => 0,
+   "debug-parser-trace" => 0,
+   "debug-preparer"     => 0,
+   "e"                  => 0,
 );
 my @new_argv;
 
@@ -50,9 +51,10 @@ if($par{e}) {
 
 my $converter = perltugues::Converter->new;
 
-$converter->debug_input    if $par{"debug-input"};
-$converter->debug_parser   if $par{"debug-parser"};
-$converter->debug_preparer if $par{"debug-preparer"};
+$converter->debug_input        if $par{"debug-input"};
+$converter->debug_parser       if $par{"debug-parser"};
+$converter->debug_parser_trace if $par{"debug-parser-trace"};
+$converter->debug_preparer     if $par{"debug-preparer"};
 
 my $perl_code = $converter->convert($code);
 if($par{"so-traduzir"}) {
