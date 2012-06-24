@@ -15,14 +15,28 @@ sub STORE {
    my $self = shift;
    my $val  = shift;
    $self->test($val);
-   $self->{valor} = $val;
+   $self->{valor} = $self->transform_in($val);
 }
 
 sub FETCH {
    my $self = shift;
-   my $val  = shift;
-   $self->test($self->{valor});
+   my $val  = $self->transform_out($self->{valor});
+   $self->test($val);
    $self->{valor}
+}
+
+sub transform_out {
+   my $self  = shift;
+   my $value = shift;
+
+   $value
+}
+
+sub transform_in {
+   my $self  = shift;
+   my $value = shift;
+
+   $value
 }
 
 sub test {
