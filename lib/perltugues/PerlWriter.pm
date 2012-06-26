@@ -142,6 +142,20 @@ sub block {
    $ret
 }
 
+sub while_cmd {
+   my $self = shift;
+   my($test, $block) = @_;
+
+   "while($test) $block"
+}
+
+sub until_cmd {
+   my $self = shift;
+   my($test, $block) = @_;
+
+   "until($test) $block"
+}
+
 sub for_cmd {
    my $self = shift;
    my($init, $test, $incr, $block) = @_;
