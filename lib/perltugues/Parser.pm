@@ -119,13 +119,23 @@ sub get_rule {
       unless_cmd: unless_names '(' condition ')' block
       { $return = {unless_cmd => [@item[3, 5]]} }
 
-      iteration: for_cmd | foreach_cmd
+      iteration: for_cmd | foreach_cmd | while_cmd | until_cmd
 
       for_cmd: 'para' '(' command(s? /,/) ';' condition(?) ';' command(s? /,/) ')' block
       { $return = {for_cmd => [@item[3, 5, 7, 9]]} }
 
       foreach_cmd: ('para cada' | 'para_cada' | 'paraCada') var '(' list ')' block
       { $return = {foreach_cmd => [@item[2, 4, 6]]} }
+
+      while_cmd: 'enquanto' '(' condition(?) ')' block
+      { $return = {while_cmd => [@item[3, 5]]} }
+
+      ate: 'ate' | 'ateh'
+
+      until_name: ate que
+
+      until_cmd: 'enquanto' '(' condition(?) ')' block
+      { $return = {until_cmd => [@item[3, 5]]} }
 
       add:          '+'
       {$item[0]}
@@ -149,7 +159,7 @@ sub get_rule {
       not_equal:    '!='
       {$item[0]}
       
-      op_bin: add | subtract | multiply | divide | grater_than | less_than | grater_or_eq | less_or_eq | equal | not_equal
+      op_bin: add | subtract | multiply | divide | grater_or_eq | less_or_eq | grater_than | less_than | equal | not_equal
       
       cmd_op: cmd_not_op op_bin command
       { $return = {$item[2] => [$item[1], $item[3]]} }
