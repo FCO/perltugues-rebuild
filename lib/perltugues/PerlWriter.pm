@@ -31,8 +31,6 @@ use utf8;
 use strict;
 use warnings;
 
-package perltugues::AreaSegura::Das${time}::Numero${rand};
-
 END
    push @ret, map{"use $_;$/"} @{ $self->{includes} };
    @ret, $/
@@ -202,7 +200,7 @@ sub less_or_eq {
    "$par1 <= $par2"
 }
 
-sub gratter_than {
+sub grater_than {
    my $self = shift;
    my $par1 = shift;
    my $par2 = shift;
@@ -210,7 +208,7 @@ sub gratter_than {
    "$par1 > $par2"
 }
 
-sub gratter_or_eq {
+sub grater_or_eq {
    my $self = shift;
    my $par1 = shift;
    my $par2 = shift;
@@ -232,6 +230,48 @@ sub not_equal {
    my $par2 = shift;
 
    "$par1 != $par2"
+}
+
+sub pre_incr {
+   my $self = shift;
+   my $var  = shift;
+
+   "++$var"
+}
+
+sub pre_decr {
+   my $self = shift;
+   my $var  = shift;
+
+   "--$var"
+}
+
+sub pos_incr {
+   my $self = shift;
+   my $var  = shift;
+
+   "$var++"
+}
+
+sub pos_decr {
+   my $self = shift;
+   my $var  = shift;
+
+   "$var--"
+}
+
+sub pre_incr {
+   my $self = shift;
+   my $var  = shift;
+
+   "++$var"
+}
+
+sub condition {
+   my $self = shift;
+   my $cmd  = shift;
+
+   "scalar( $cmd ) != 0"
 }
 
 sub write_includes {

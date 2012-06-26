@@ -65,9 +65,11 @@ sub get_rule {
 
       cmd_or_blk: command(s? /;/) | block(s?)
       
-      command:      declaration | const | iteration | conditional | assign | block | cmd_op | function | imprima | list | var
-      cmd_not_op:   declaration | const | iteration | conditional | assign | block |          function | imprima |        var
-      cmd_not_list: declaration | const | iteration | conditional | assign | block | cmd_op | function | imprima |        var
+      command:      declaration | const | iteration | conditional | incr_decr | eq_math | assign | block | cmd_op | function | imprima | list | var
+      cmd_not_op:   declaration | const | iteration | conditional | incr_decr | eq_math | assign | block |          function | imprima |        var
+      cmd_not_list: declaration | const | iteration | conditional | incr_decr | eq_math | assign | block | cmd_op | function | imprima |        var
+
+      return_value: const | incr_decr | eq_math | assign | cmd_op | list | var
       
       declaration: word ":" word(s /,/)
       {
@@ -101,10 +103,12 @@ sub get_rule {
       {$return = {function_call => [$item{word}, $item[-2]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
-      block: '{' code (/;+/)(?) '}'
+      block: '{' code (/;+/)(s?) '}'
       { $return = {block => $item[2]->[0]} }
 
-      condition: declaration | const | assign | cmd_op | function | var
+      #condition: declaration | const | assign | cmd_op | function | var
+      condition: return_value
+      { $return = { condition => $item[1] } }
 
       conditional: if_cmd | unless_cmd
 
@@ -136,6 +140,10 @@ sub get_rule {
       divide:       '/'
       {$item[0]}
 
+      equal:        '=='
+      {$item[0]}
+      not_equal:    '!='
+      {$item[0]}
       grater_than:  '>'
       {$item[0]}
       less_than:    '<'
@@ -144,17 +152,43 @@ sub get_rule {
       {$item[0]}
       less_or_eq: '<='
       {$item[0]}
-      equal:        '=='
-      {$item[0]}
-      not_equal:    '!='
-      {$item[0]}
       
-      op_bin: add | subtract | multiply | divide | grater_than | less_than | grater_or_eq | less_or_eq | equal | not_equal
+      op_math: add | subtract | multiply | divide
+
+      op_bin: op_math | grater_than | less_than | grater_or_eq | less_or_eq | equal | not_equal
+
+      plus_eq_math: var '+=' command
+      { $return = {assign => [$item[1], {add => [$item[1], $item[3]]}]} }
+      
+      minus_eq_math: var '-=' command
+      { $return = {assign => [$item[1], {add => [$item[1], $item[3]]}]} }
+      
+      star_eq_math: var '*=' command
+      { $return = {assign => [$item[1], {add => [$item[1], $item[3]]}]} }
+      
+      slash_eq_math: var '/=' command
+      { $return = {assign => [$item[1], {add => [$item[1], $item[3]]}]} }
+
+      eq_math: plus_eq_math | minus_eq_math | star_eq_math | slash_eq_math
+
+      pre_incr: '++' var
+      { $return = {pre_incr => $item[2]} }
+      pos_incr: var '++'
+      { $return = {pos_incr => $item[2]} }
+      incr: pre_incr | pre_incr
+      
+      pre_decr: '--' var
+      { $return = {pre_decr => $item[2]} }
+      pos_decr: var '--'
+      { $return = {pos_decr => $item[2]} }
+      decr: pre_decr | pre_decr
+
+      incr_decr: incr | decr
       
       cmd_op: cmd_not_op op_bin command
       { $return = {$item[2] => [$item[1], $item[3]]} }
    
-      imprima: 'imprima(' command ')'
+      imprima: 'imprima(' return_value ')'
       { $return = {imprima => $item[2]} }
 
       list_comma: <leftop: cmd_not_list ',' command>
