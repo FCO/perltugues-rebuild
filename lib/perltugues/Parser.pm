@@ -71,7 +71,9 @@ sub get_rule {
 
       return_value: const | incr_decr | eq_math | assign | cmd_op | list | var
       
-      declaration: word ":" word(s /,/)
+      type: word
+
+      declaration: type ":" word(s /,/)
       {
          $thisparser->{converter}->add_type($item[1]) if $thisparser->{converter} and $thisparser->{converter}->can("add_type");
          push @code_vars, @{ $item{"word(s)"} };
@@ -100,7 +102,7 @@ sub get_rule {
       {$return = {assign => [$item[1], $item[4]]}}
       
       function: word '(' command(s? /,/) ')'
-      {$return = {function_call => [$item{word}, $item[-2]] } }
+      {$return = {function_call => [$item[1], $item[3]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
       
       block: '{' code (/;+/)(s?) '}'
