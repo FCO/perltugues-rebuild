@@ -1,0 +1,14 @@
+
+inteiro: i, j;
+texto: k;
+inteiro: l;
+
+para cada i (5, 10, 15, 20, 25, 30, 35, 40, 45, 50) {
+   imprima(i);
+   k = "lalala";
+   imprima(k);
+   imprima(j);
+   imprima("\n");
+
+}
+

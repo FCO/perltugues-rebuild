@@ -1,0 +1,1 @@
+tie my $i, 'perltugues::Tipo::inteiro'; tie my $j, 'perltugues::Tipo::inteiro'; tie my $k, 'perltugues::Tipo::texto'; tie my $l, 'perltugues::Tipo::inteiro'; foreach my $i (5, 10, 15, 20, 25, 30, 35, 40, 45, 50) { print $i; $k = "lalala"; print $k; print $j; print "\n"; };

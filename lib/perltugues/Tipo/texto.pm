@@ -2,7 +2,8 @@ package perltugues::Tipo::texto;
 
 use base perltugues::Tipo;
 
-our $tipo = "texto";
+our $tipo  = "texto";
+our $value = "";
 
 sub validator {
    my $self = shift;

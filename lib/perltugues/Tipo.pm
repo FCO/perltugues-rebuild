@@ -3,12 +3,21 @@ use Carp;
 
 our $tipo = "generico";
 our $msg;
+our $value;
 
 sub TIESCALAR {
    my $class = shift;
-   bless {
-      valor => undef,
-   }, $class;
+   my $self = bless {}, $class;
+   $self->set_default_value;
+   $self
+}
+
+sub set_default_value {
+   my $self    = shift;
+   my $ns      = ref $self;
+   my $nsvalue = "${ns}::value";
+
+   $self->{valor} = $$nsvalue
 }
 
 sub STORE {

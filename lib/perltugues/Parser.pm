@@ -104,9 +104,14 @@ sub get_rule {
       function: word '(' command(s? /,/) ')'
       {$return = {function_call => [$item[1], $item[3]] } }
       {$return = undef unless grep {$item[1] eq $_} @code_functions }
-      
-      block: '{' code (/;+/)(s?) '}'
+
+      begin_end_block: 'begin' (':')(?) code (/;+/)(s?) 'end'
+      { $return = {block => $item[3]->[0]} }
+
+      curly_block: '{' code (/;+/)(s?) '}'
       { $return = {block => $item[2]->[0]} }
+
+      block: begin_end_block | curly_block
 
       #condition: declaration | const | assign | cmd_op | function | var
       condition: return_value
@@ -219,9 +224,15 @@ sub get_rule {
          $return = {list_comma => [get_list_comma_item($item[1])]} 
       }
 
-      num_list: cmd_not_list '..' cmd_not_list
+      ate: 'ate' | 'até' | 'ateh'
 
-      list: list_comma | num_list
+      a_cada: 'a cada' return_value
+      { $return = $item[2] }
+
+      num_list: 'de' return_value ate return_value a_cada(?)
+      { $return = {list_interval => [@item[2, 4, 6]]} }
+
+      list: num_list | list_comma
    
 END
 }
